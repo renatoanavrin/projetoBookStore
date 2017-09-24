@@ -15,10 +15,12 @@
          <script src="js/bootstrap.min.js" type="text/javascript"></script>-->
 
         <script src="js/jquery-3.1.1.js"></script>
+        <script src="js/mask/jQuery-Mask-Plugin-master/dist/jquery.mask.min.js"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
         <!--<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>-->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+
 
 
     </head>
@@ -38,10 +40,11 @@
             $(document).ready(function () {
                 codigo = $('#codigo').val();
                 carregarDados(codigo);
+                $('#ano').mask('0000');
             });
 
             function salvarProduto() {
-
+                alert($("form").serialize());
                 if ($("#codigo").val().length > 0) {
                     acao = 'alterar';
                     codigo = $("#codigo").val();
@@ -50,23 +53,38 @@
                     codigo = 0;
                 }
 
+                console.log($(this).serialize());
+    //build an array of selected values
+        var categorias = [];
+                $('#categoria :selected').each(function (i, selected) {
+                    categorias[i] = $(selected).val();
+                });
+                
+                var subcategorias = [];
+                $('#subcategoria :selected').each(function (i,selected){
+                   subcategorias[i]  = $(selected).val();
+                });
+
+                
                 request = $.ajax({
 
-                    url: '/cadastrobebida/cadastrobebida',
+                    url: '/lojaLivros/cadastrolivro',
                     type: 'post',
-                    data: {
-                        'acao': acao,
-                        'nome': $('#nome').val(),
-                        'fabricante': $('#fabricante').val(),
-                        'datafabricacao': $('#datafabricacao').val(),
-                        'datavalidade': $('#datavalidade').val(),
-                        'fornecedor': $('#fornecedor').val(),
-                        'categoria': $('#categoria').val(),
-                        'teor': $('#teor').val(),
-                        'codigo': codigo,
-                        'preco': $('#preco').val(),
-                        'estoqueminimo': $('#estoqueminimo').val(),
-                        'estoquemaximo': $('#estoquemaximo').val()}
+                    data: $('form').serialize() + "&acao=" + acao +"&categoria=" + categorias + "&subcategoria=" +subcategorias
+
+                            /* {
+                             'acao': acao,
+                             'titulo': $('#titulo').val(),
+                             'fabricante': $('#fabricante').val(),
+                             'datafabricacao': $('#datafabricacao').val(),
+                             'datavalidade': $('#datavalidade').val(),
+                             'fornecedor': $('#fornecedor').val(),
+                             'categoria': $('#categoria').val(),
+                             'teor': $('#teor').val(),
+                             'codigo': codigo,
+                             'preco': $('#preco').val(),
+                             'estoqueminimo': $('#estoqueminimo').val(),
+                             'estoquemaximo': $('#estoquemaximo').val()}*/
                 });
 
 
@@ -94,7 +112,7 @@
 
                 request = $.ajax({
 
-                    url: '/cadastrobebida/cadastrobebida',
+                    url: '/lojaLivros/cadastrobebida',
                     type: 'post',
                     data: {
                         'acao': 'excluir',
@@ -252,8 +270,8 @@
                                 </div>
                                 <div class='form-group'>
                                     <div style='width: 100%;float: left'>
-                                        <label for='nome'> Título</label>
-                                        <input type='text' class='form-control ' id='titulo' value='' >
+                                        <label for='titulo'> Título</label>
+                                        <input type='text' class='form-control ' id='titulo' name="titulo" value='' >
                                     </div>
                                     <!--<div style='width: 45%;float: right'>
                                         <label for='categoria' >Categoria</label>
@@ -267,14 +285,24 @@
                                 <div class='form-group'>
                                     <div style='width: 45%;float: left'>
                                         <label for='categoria' >Categoria</label>
-                                        <select class='form-control' id='categoria' >
+                                        <!--<select class='form-control' id='categoria' name="categoria">
                                             <option value="1">Categoria1</option>
                                             <option value="2">Categoria2</option>
+                                        </select>-->
+                                        <select  class='form-control' id="categoria" multiple="multiple" >
+                                            <option value="1">Categoria1</option>
+                                            <option value="2">Categoria2</option>
+                                            <option value="3">Categoria3</option>
                                         </select>
                                     </div>
                                     <div style='width: 45%;float: right'>
                                         <label for='subcategoria' >SubCategoria</label>
-                                        <select class='form-control' id='subcategoria' >
+                                        <!--<select class='form-control' id='subcategoria' name="subcategoria">
+                                            <option value="1">SubCategoria1</option>
+                                            <option value="2">SubCategoria2</option>
+                                        <option value="3">SubCategoria3</option>
+                                        </select>-->
+                                        <select  class='form-control' id="subcategoria" multiple="multiple" >
                                             <option value="1">SubCategoria1</option>
                                             <option value="2">SubCategoria2</option>
                                         </select>
@@ -284,7 +312,7 @@
                                 <div class='form-group'>
                                     <div style='width: 45%;float: left'>
                                         <label for='autor' >Autor</label>
-                                        <select id='autor' class='form-control'>
+                                        <select id='autor' class='form-control' name="autor">
                                             <option value="1">Autor1 </option>
                                             <option value="2">Autor2</option>
                                         </select>
@@ -292,7 +320,7 @@
 
                                     <div style='width: 45%;float: right'>
                                         <label for='editora' >Editora</label>
-                                        <select id='editora' class='form-control'>
+                                        <select id='editora' class='form-control' name="editora">
                                             <option value="1">Editora1</option>
                                             <option value="2">Editora2</option>
                                         </select>
@@ -303,12 +331,12 @@
                                 <div class='form-group'>
                                     <div style='width: 45%;float: left'>
                                         <label for='edicao' >Edição</label>
-                                        <input type='text' class='form-control' id='edicao' value='' >
+                                        <input type='text' class='form-control' id='edicao' value='' name="edicao" >
                                     </div>
 
                                     <div style='width: 45%;float: right'>
                                         <label for='ano' >Ano</label>
-                                        <input type='text' class='form-control' id='ano' value='' >
+                                        <input type='text' class='form-control' name='ano' value='' >
                                     </div>
 
                                 </div>
@@ -316,12 +344,12 @@
                                 <div class='form-group'>
                                     <div style='width: 45%;float: left'>
                                         <label for='isbn' >ISBN</label>
-                                        <input type='text' class='form-control' id='isbn' value='' >
+                                        <input type='text' class='form-control' id='isbn' value='' name="isbn">
                                     </div>
 
                                     <div style='width: 45%;float: right'>
                                         <label for='numeropaginas' >Número de Páginas</label>
-                                        <input type='text' class='form-control' id='numeropaginas' value='' >
+                                        <input type='text' class='form-control' id='numeropaginas' value='' name="numeropaginas">
                                     </div>
 
                                 </div>
@@ -329,12 +357,12 @@
                                 <div class='form-group'>
                                     <div style='width: 45%;float: left'>
                                         <label for='altura' >Altura</label>
-                                        <input type='text' class='form-control' id='altura' value='' >
+                                        <input type='text' class='form-control' id='altura' value='' name="altura" >
                                     </div>
 
                                     <div style='width: 45%;float: right'>
                                         <label for='largura' >Largura</label>
-                                        <input type='text' class='form-control' id='largura' value='' >
+                                        <input type='text' class='form-control' id='largura' value='' name="largura">
                                     </div>
 
                                 </div>
@@ -342,12 +370,12 @@
                                 <div class='form-group'>
                                     <div style='width: 45%;float: left'>
                                         <label for='peso' >Peso</label>
-                                        <input type='text' class='form-control' id='peso' value='' >
+                                        <input type='text' class='form-control' id='peso' value='' name="peso">
                                     </div>
 
                                     <div style='width: 45%;float: right'>
                                         <label for='profundidade' >Profundidade</label>
-                                        <input type='text' class='form-control' id='profundidade' value='' >
+                                        <input type='text' class='form-control' id='profundidade' value='' name="profundidade">
                                     </div>
 
                                 </div>
@@ -355,10 +383,15 @@
                                 <div class='form-group'>
                                     <div style='width: 45%;float: left'>
                                         <label for='precificacao' >Grupo Precificação</label>
-                                        <select id='precificacao' class='form-control'>
+                                        <select id='precificacao' class='form-control' name="precificacao">
                                             <option value="1">precificacao 1 </option>
                                             <option value="2">ptecificacao 2</option>
                                         </select>
+                                    </div>
+
+                                    <div style='width: 45%;float: right'>
+                                        <label for='codigobarras' >Código de Barras</label>
+                                        <input type='text' class='form-control' id='codigobarras' value='' name="codigobarras">
                                     </div>
 
 
@@ -368,8 +401,10 @@
 
                                     <div style='width: 100%;float: left'>
                                         <label for='sinopse' >Sinopse</label>
-                                        <textarea rows="4" cols="50" class="form-control"></textarea>
+                                        <textarea rows="4" cols="50" class="form-control" id="sinopse" name="sinopse"></textarea>
                                     </div>
+
+
                                 </div>
 
                         </div>
