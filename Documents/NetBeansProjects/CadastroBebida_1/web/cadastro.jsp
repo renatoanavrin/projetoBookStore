@@ -8,7 +8,7 @@
 <html>
     <head>
         <meta charset = "UTF-8">
-        <title>Cadastro de Livros</title>
+        <title>Cadastro de Livross</title>
 
         <!-- <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
          <script src="js/jquery-3.1.1.js" type="text/javascript"></script>
